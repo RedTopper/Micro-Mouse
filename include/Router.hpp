@@ -1,22 +1,24 @@
 #ifndef ARDUINO_FEATHER_ROUTER_HPP
 #define ARDUINO_FEATHER_ROUTER_HPP
 
-#include "Mouse.hpp"
-#include "Utility.hpp"
+#include "Controllers/MouseController.hpp"
 
-#include <memory>
 #include <esp_http_server.h>
+#include <memory>
 #include <vector>
 
 namespace Maze {
+	typedef std::function<esp_err_t(httpd_req_t*)> Callable;
+
+	class Runner;
 	class Router {
 	public:
-		explicit Router(std::unique_ptr<Mouse> mouse);
-		void start(httpd_handle_t server);
+		Router();
+		void router(Runner* runner) const;
 
 	private:
-		std::unique_ptr<Mouse> _mouse;
-		std::vector<httpd_uri_t> _routes;
+		std::unique_ptr<MouseController> _mouse = nullptr;
+
 	};
 }
 

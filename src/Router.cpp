@@ -1,26 +1,19 @@
+#include "Controllers/Controller.hpp"
 #include "Router.hpp"
-#include "Utility.hpp"
+#include "Runner.hpp"
+
+#include <ArduinoJson.hpp>
 
 namespace Maze {
-	Router::Router(std::unique_ptr<Mouse> mouse) {
-		_routes.push_back({
-			.uri      = "/move/forward",
-			.method   = HTTP_GET,
-			.handler  = Mouse::dispatch,
-			.user_ctx = mouse->context(&Mouse::forward)
-		});
-
-		_routes.push_back({
-			.uri      = "/move/stop",
-			.method   = HTTP_GET,
-			.handler  = Mouse::dispatch,
-			.user_ctx = mouse->context(&Mouse::stop)
-		});
+	Router::Router() {
+		// Create the needed controllers
+		_mouse = std::make_unique<MouseController>();
 	}
 
-	void Router::start(httpd_handle_t server) {
-		for (auto i : _routes) {
-			httpd_register_uri_handler(server, &i);
-		}
+	void Router::router(Runner* runner) const {
+		// Add routes here
+		runner->get("/move/forward", [&](httpd_req_t *r){return _mouse->forward(r);});
+		runner->get("/move/stop", [&](httpd_req_t *r){return _mouse->stop(r);});
+		runner->get("/move", [&](httpd_req_t *r){return _mouse->query(r);});
 	}
 }

@@ -1,4 +1,4 @@
-#include "Mouse.hpp"
+#include "Controllers/MouseController.hpp"
 #include "Runner.hpp"
 #include "Utility.hpp"
 
@@ -11,7 +11,7 @@ namespace Maze {
 	const char* PASSWORD = "micromouse-password";
 
 	void Runner::setup() {
-		Serial.begin(115200);
+		Serial.begin(9600);
 		Serial.printf("[Runner:setup] Serial Connected!\r\n");
 
 		bool ok;
@@ -43,14 +43,31 @@ namespace Maze {
 		ok = httpd_start(&_server, &config);
 		Serial.printf("[Runner:setup] Starting http server: ... %s", is(ok == ESP_OK));
 
-		_router = std::make_unique<Router>(std::make_unique<Mouse>());
-		_router->start(_server);
+		_router = std::make_unique<Router>();
+		_router->router(this);
 	}
 
 	void Runner::loop() {
 
 	}
 
+	esp_err_t Runner::dispatch(httpd_req_t *r) {
+		auto* func = static_cast<Callable*>(r->user_ctx);
+		return (*func)(r);
+	}
 
+	void Runner::get(const char* route, const Callable& callable) {
+		auto pointer = std::make_unique<Callable>(callable);
+		auto context = pointer.get();
+		_callables.push_back(std::move(pointer));
+		httpd_uri_t data {
+				.uri = route,
+				.method = HTTP_GET,
+				.handler = &Runner::dispatch,
+				.user_ctx = context
+		};
+
+		httpd_register_uri_handler(_server, &data);
+	}
 }
 
