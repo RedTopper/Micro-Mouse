@@ -2,6 +2,7 @@
 #define ARDUINO_FEATHER_ROUTER_HPP
 
 #include "Controllers/MouseController.hpp"
+#include "Sensor.hpp"
 
 #include <esp_http_server.h>
 #include <memory>
@@ -13,7 +14,7 @@ namespace Maze {
 	class Runner;
 	class Router {
 	public:
-		Router();
+		Router(Sensor* sensor);
 		void router(Runner* runner) const;
 
 	private:

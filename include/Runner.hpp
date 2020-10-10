@@ -3,6 +3,7 @@
 
 #include "Controllers/MouseController.hpp"
 #include "Router.hpp"
+#include "Sensor.hpp"
 
 #include <esp_http_server.h>
 
@@ -16,6 +17,7 @@ namespace Maze {
 
 		httpd_handle_t _server = nullptr;
 		std::unique_ptr<Router> _router = nullptr;
+		std::unique_ptr<Sensor> _sensor = nullptr;
 		std::vector<std::unique_ptr<Callable>> _callables;
 	};
 }

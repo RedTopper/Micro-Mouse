@@ -14,6 +14,8 @@ namespace Maze {
 		Serial.begin(9600);
 		Serial.printf("[Runner:setup] Serial Connected!\r\n");
 
+		_sensor = std::make_unique<Sensor>();
+
 		bool ok;
 		IPAddress ip(172, 16, 0, 1);
 		IPAddress mask(255, 255, 255, 0);
@@ -43,12 +45,12 @@ namespace Maze {
 		ok = httpd_start(&_server, &config);
 		Serial.printf("[Runner:setup] Starting http server: ... %s", is(ok == ESP_OK));
 
-		_router = std::make_unique<Router>();
+		_router = std::make_unique<Router>(_sensor.get());
 		_router->router(this);
 	}
 
 	void Runner::loop() {
-
+		_sensor->loop();
 	}
 
 	esp_err_t Runner::dispatch(httpd_req_t *r) {

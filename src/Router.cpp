@@ -5,9 +5,9 @@
 #include <ArduinoJson.hpp>
 
 namespace Maze {
-	Router::Router() {
+	Router::Router(Sensor* sensor) {
 		// Create the needed controllers
-		_mouse = std::make_unique<MouseController>();
+		_mouse = std::make_unique<MouseController>(sensor);
 	}
 
 	void Router::router(Runner* runner) const {
