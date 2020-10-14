@@ -1,57 +1,28 @@
 #include "Sensors/Range.hpp"
 
+#include <Wire.h>
+
 namespace Maze {
 	Range::Range() {
-		_sensor = Adafruit_VL6180X();
-		_initialized = _sensor.begin();
+		Wire.setTimeOut(3000);
+		_sensor = Adafruit_VL6180XInternal();
+		_initialized = _sensor.internalBegin();
 	}
 
 	Range::~Range() = default;
 
 	void Range::loop() {
 		if (!_initialized) {
-			_message = "Failed to initialize";
+			_status = -1;
 			return;
 		}
 
-		_lux = _sensor.readLux(VL6180X_ALS_GAIN_5);
-		_range = _sensor.readRange();
-		uint8_t status = _sensor.readRangeStatus();
-
-		Serial.printf("%d ", _range);
-
-		if ((status >= VL6180X_ERROR_SYSERR_1) && (status <= VL6180X_ERROR_SYSERR_5)) {
-			_message = "System error";
+		uint8_t range;
+		if (_sensor.readRangeNoWait(range, 500)) {
+			Serial.printf("%d ", _range);
+			_range = range;
+			_status = _sensor.readRangeStatus();
 		}
-		else if (status == VL6180X_ERROR_ECEFAIL) {
-			_message = "ECE failure";
-		}
-		else if (status == VL6180X_ERROR_NOCONVERGE) {
-			_message = "No convergence";
-		}
-		else if (status == VL6180X_ERROR_RANGEIGNORE) {
-			_message = "Ignoring range";
-		}
-		else if (status == VL6180X_ERROR_SNR) {
-			_message = "Signal/Noise error";
-		}
-		else if (status == VL6180X_ERROR_RAWUFLOW) {
-			_message = "Raw reading underflow";
-		}
-		else if (status == VL6180X_ERROR_RAWOFLOW) {
-			_message = "Raw reading overflow";
-		}
-		else if (status == VL6180X_ERROR_RANGEUFLOW) {
-			_message = "Range reading underflow";
-		}
-		else if (status == VL6180X_ERROR_RANGEOFLOW) {
-			_message = "Range reading overflow";
-		}
-	}
-
-	float Range::lux() const {
-		if (!_initialized) return -1;
-		return _lux;
 	}
 
 	uint8_t Range::range() const {
@@ -60,6 +31,106 @@ namespace Maze {
 	}
 
 	const char* Range::message() const {
-		return _message;
+		switch (_status) {
+		case -1:
+			return "Failed to initialize";
+		case VL6180X_ERROR_SYSERR_1:
+		case VL6180X_ERROR_SYSERR_1 + 1:
+		case VL6180X_ERROR_SYSERR_1 + 2:
+		case VL6180X_ERROR_SYSERR_1 + 3:
+		case VL6180X_ERROR_SYSERR_5:
+			return "System Error";
+		case VL6180X_ERROR_ECEFAIL:
+			return "ECE failure";
+		case VL6180X_ERROR_NOCONVERGE:
+			return "No convergence";
+		case VL6180X_ERROR_RANGEIGNORE:
+			return "Ignoring range";
+		case VL6180X_ERROR_SNR:
+			return "Signal/Noise error";
+		case VL6180X_ERROR_RAWUFLOW:
+			return "Raw reading underflow";
+		case VL6180X_ERROR_RAWOFLOW:
+			return "Raw reading overflow";
+		case VL6180X_ERROR_RANGEUFLOW:
+			return "Range reading underflow";
+		case VL6180X_ERROR_RANGEOFLOW:
+			return "Range reading overflow";
+		default:
+			return "Unknown Error";
+		}
+	}
+
+	bool Adafruit_VL6180XInternal::readRangeNoWait(uint8_t& range, uint16_t timeout) {
+		if (_time == 0l) _time = millis();
+
+		if (timeout && millis() - _time > timeout) {
+			_state = State::IDLE;
+			_time = millis();
+			// Send reset signal?
+			Serial.printf("[Adafruit_VL6180XInternal::readRangeNoWait] Timeout.");
+		}
+
+		switch (_state) {
+		case State::IDLE:
+			// initiate a read
+			_ready = false;
+			_state = State::REQUEST;
+			_time = millis();
+			break;
+
+		case State::REQUEST:
+			// wait for device to be ready for range measurement
+			if ((internalRead8(VL6180X_REG_RESULT_RANGE_STATUS) & 0x01u))
+				_state = State::TRIGGER;
+			break;
+
+		case State::TRIGGER:
+			// Start a range measurement
+			internalWrite8(VL6180X_REG_SYSRANGE_START, 0x01);
+			_state = State::WAIT;
+			break;
+
+		case State::WAIT:
+			// wait for data to be available, Poll until bit 2 is set
+			if ((internalRead8(VL6180X_REG_RESULT_INTERRUPT_STATUS_GPIO) & 0x04u))
+				_state = State::AVAILABLE;
+			break;
+
+		case State::AVAILABLE:
+			// read & cleanup, flag data is there
+			range = internalRead8(VL6180X_REG_RESULT_RANGE_VAL);
+			internalWrite8(VL6180X_REG_SYSTEM_INTERRUPT_CLEAR, 0x07);
+			_state = State::IDLE; // go back to Idle state
+			_ready = true;
+			break;
+
+		default: // should not happen!
+			break;
+		}
+
+		return _ready;
+	}
+
+	uint8_t Adafruit_VL6180XInternal::internalRead8(uint16_t address) {
+		_internalWire->beginTransmission(getAddress());
+		_internalWire->write(address >> 8u);
+		_internalWire->write(address);
+		_internalWire->endTransmission();
+		_internalWire->requestFrom(getAddress(), (uint8_t)1);
+		return _internalWire->read();
+	}
+
+	void Adafruit_VL6180XInternal::internalWrite8(uint16_t address, uint8_t data) {
+		_internalWire->beginTransmission(getAddress());
+		_internalWire->write(address >> 8u);
+		_internalWire->write(address);
+		_internalWire->write(data);
+		_internalWire->endTransmission();
+	}
+
+	boolean Adafruit_VL6180XInternal::internalBegin(TwoWire* theWire) {
+		_internalWire = theWire ? theWire : &Wire;
+		return Adafruit_VL6180X::begin(theWire);
 	}
 }
