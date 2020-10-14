@@ -18,6 +18,8 @@ namespace Maze {
 		_range = _sensor.readRange();
 		uint8_t status = _sensor.readRangeStatus();
 
+		Serial.printf("%d ", _range);
+
 		if ((status >= VL6180X_ERROR_SYSERR_1) && (status <= VL6180X_ERROR_SYSERR_5)) {
 			_message = "System error";
 		}
