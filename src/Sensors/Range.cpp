@@ -1,12 +1,14 @@
-#include "Sensor.hpp"
+#include "Sensors/Range.hpp"
 
 namespace Maze {
-	Sensor::Sensor() {
+	Range::Range() {
 		_sensor = Adafruit_VL6180X();
 		_initialized = _sensor.begin();
 	}
 
-	void Sensor::loop() {
+	Range::~Range() = default;
+
+	void Range::loop() {
 		if (!_initialized) {
 			_message = "Failed to initialize";
 			return;
@@ -45,17 +47,17 @@ namespace Maze {
 		}
 	}
 
-	float Sensor::lux() const {
+	float Range::lux() const {
 		if (!_initialized) return -1;
 		return _lux;
 	}
 
-	uint8_t Sensor::range() const {
+	uint8_t Range::range() const {
 		if (!_initialized) return -1;
 		return _range;
 	}
 
-	const char* Sensor::message() const {
+	const char* Range::message() const {
 		return _message;
 	}
 }

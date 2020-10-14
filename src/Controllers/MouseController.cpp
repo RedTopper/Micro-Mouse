@@ -1,12 +1,13 @@
 #include "Controllers/MouseController.hpp"
 
+#include "Components.hpp"
+#include "Sensors/Range.hpp"
+
 #include <ArduinoJson.hpp>
 #include <Arduino.h>
 
 namespace Maze {
-	MouseController::MouseController(Sensor* sensor) {
-		_sensor = sensor;
-	}
+	MouseController::~MouseController() = default;
 
 	esp_err_t MouseController::forward(httpd_req_t* r) {
 		ArduinoJson::DynamicJsonDocument doc(1024);
@@ -29,9 +30,11 @@ namespace Maze {
 	esp_err_t MouseController::query(httpd_req_t* r) {
 		ArduinoJson::DynamicJsonDocument doc(1024);
 		doc["status"] = _movement == Movement::STOP ? "Stop" : (_movement == Movement::FORWARDS ? "Forwards" : "Backwards");
-		doc["lux"] = _sensor->lux();
-		doc["range"] = _sensor->range();
-		doc["message"] = _sensor->message();
+
+		auto& front = _components.rangeFront();
+		doc["lux"] = front.lux();
+		doc["range"] = front.range();
+		doc["message"] = front.message();
 
 		Serial.printf("[Mouse:query] Query!\r\n");
 

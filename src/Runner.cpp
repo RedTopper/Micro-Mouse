@@ -1,6 +1,10 @@
-#include "Controllers/MouseController.hpp"
 #include "Runner.hpp"
+
+#include "Controllers/MouseController.hpp"
+#include "Sensors/Range.hpp"
+#include "Components.hpp"
 #include "Utility.hpp"
+#include "Router.hpp"
 
 #include <Arduino.h>
 #include <WiFi.h>
@@ -10,11 +14,12 @@ namespace Maze {
 	const char* AP = "micromouse";
 	const char* PASSWORD = "micromouse-password";
 
-	void Runner::setup() {
-		Serial.begin(9600);
-		Serial.printf("[Runner:setup] Serial Connected!\r\n");
+	Runner::Runner() = default;
+	Runner::~Runner() = default;
 
-		_sensor = std::make_unique<Sensor>();
+	void Runner::setup() {
+		_components = std::make_unique<Components>();
+		Serial.printf("[Runner:setup] Components created!\r\n");
 
 		bool ok;
 		IPAddress ip(172, 16, 0, 1);
@@ -45,12 +50,12 @@ namespace Maze {
 		ok = httpd_start(&_server, &config);
 		Serial.printf("[Runner:setup] Starting http server: ... %s", is(ok == ESP_OK));
 
-		_router = std::make_unique<Router>(_sensor.get());
-		_router->router(this);
+		_router = std::make_unique<Router>(*_components);
+		_router->router(*this);
 	}
 
-	void Runner::loop() {
-		_sensor->loop();
+	void Runner::loop() const {
+		_components->loop();
 	}
 
 	esp_err_t Runner::dispatch(httpd_req_t *r) {

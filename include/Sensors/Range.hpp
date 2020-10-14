@@ -1,13 +1,14 @@
-#ifndef MICRO_MOUSE_SENSOR_HPP
-#define MICRO_MOUSE_SENSOR_HPP
+#ifndef MICRO_MOUSE_RANGE_HPP
+#define MICRO_MOUSE_RANGE_HPP
 
 #include <Wire.h>
 #include <Adafruit_VL6180X.h>
 
 namespace Maze {
-	class Sensor {
+	class Range {
 	public:
-		Sensor();
+		Range();
+		~Range();
 
 		void loop();
 		float lux() const;
@@ -23,4 +24,4 @@ namespace Maze {
 	};
 }
 
-#endif //MICRO_MOUSE_SENSOR_HPP
+#endif //MICRO_MOUSE_RANGE_HPP

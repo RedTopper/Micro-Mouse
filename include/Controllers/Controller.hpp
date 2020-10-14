@@ -5,11 +5,18 @@
 #include <esp_http_server.h>
 
 namespace Maze {
+	class Components;
 	class Controller {
 	public:
+		explicit Controller(Components& components);
+		virtual ~Controller();
+
 		virtual const char* name() = 0;
 
 		esp_err_t send(httpd_req_t* r, ArduinoJson::DynamicJsonDocument doc, const char* func);
+
+	protected:
+		Components& _components;
 	};
 }
 
