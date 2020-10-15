@@ -32,7 +32,6 @@ namespace Maze {
 		doc["status"] = _movement == Movement::STOP ? "Stop" : (_movement == Movement::FORWARDS ? "Forwards" : "Backwards");
 
 		auto& front = _components.rangeFront();
-		doc["lux"] = front.lux();
 		doc["range"] = front.range();
 		doc["message"] = front.message();
 
