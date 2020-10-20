@@ -3,11 +3,12 @@
 
 #include "Controller.hpp"
 
+class WebServer;
 namespace Maze {
-	class MouseController : public Controller {
+	class MovementController : public Controller {
 	public:
-		explicit MouseController(Components& components) : Controller(components) {};
-		~MouseController();
+		explicit MovementController(WebServer& server, Components& components) : Controller(server, components) {};
+		~MovementController() override;
 
 		enum class Movement {
 			STOP,
@@ -15,12 +16,12 @@ namespace Maze {
 			BACKWARDS
 		};
 
-	public:
 		const char* name() override {return "MouseController";}
+		static const char* getMovement(Movement movement);
 
-		esp_err_t forward(httpd_req_t *r);
-		esp_err_t stop(httpd_req_t *r);
-		esp_err_t query(httpd_req_t *r);
+		void forward();
+		void stop();
+		void status();
 
 	private:
 		Movement _movement = Movement::STOP;

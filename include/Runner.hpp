@@ -3,12 +3,11 @@
 
 #include <functional>
 #include <memory>
-#include <esp_http_server.h>
 #include <vector>
 
-namespace Maze {
-	typedef std::function<esp_err_t(httpd_req_t*)> Callable;
+class WebServer;
 
+namespace Maze {
 	class Router;
 	class Components;
 	class Runner {
@@ -18,14 +17,12 @@ namespace Maze {
 
 		void setup();
 		void loop() const;
-		void get(const char* route, const Callable& callable);
-		static esp_err_t dispatch(httpd_req_t *r);
+		WebServer& server() {return *_server;}
 
 	private:
-		httpd_handle_t _server = nullptr;
+		std::unique_ptr<WebServer> _server;
 		std::unique_ptr<Router> _router;
 		std::unique_ptr<Components> _components;
-		std::vector<std::unique_ptr<Callable>> _callables;
 	};
 }
 

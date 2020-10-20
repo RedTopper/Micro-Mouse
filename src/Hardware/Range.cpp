@@ -1,12 +1,13 @@
-#include "Sensors/Range.hpp"
+#include "Hardware/Range.hpp"
 
 #include <Wire.h>
 
 namespace Maze {
-	Range::Range() {
+	Range::Range(uint16_t timeout) {
 		Wire.setTimeOut(3000);
 		_sensor = Adafruit_VL6180XInternal();
 		_initialized = _sensor.internalBegin();
+		_timeout = timeout;
 	}
 
 	Range::~Range() = default;
@@ -32,7 +33,7 @@ namespace Maze {
 
 	const char* Range::message() const {
 		switch (_status) {
-		case -1:
+		case 255:
 			return "Failed to initialize";
 		case VL6180X_ERROR_SYSERR_1:
 		case VL6180X_ERROR_SYSERR_1 + 1:

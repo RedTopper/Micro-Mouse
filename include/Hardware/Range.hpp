@@ -29,7 +29,7 @@ namespace Maze {
 
 	class Range {
 	public:
-		Range();
+		explicit Range(uint16_t timeout = 0);
 		~Range();
 
 		void loop();
@@ -38,8 +38,10 @@ namespace Maze {
 
 	private:
 		bool _initialized = false;
-		uint8_t _status = -1;
+		unsigned long _time = 0l;
+		uint8_t _status = 255;
 		uint8_t _range = 0;
+		uint16_t _timeout = 0;
 		Adafruit_VL6180XInternal _sensor;
 	};
 }

@@ -1,23 +1,25 @@
 #ifndef ARDUINO_FEATHER_ROUTER_HPP
 #define ARDUINO_FEATHER_ROUTER_HPP
 
-#include <esp_http_server.h>
 #include <memory>
+#include <WebServer.h>
+
 
 namespace Maze {
 	class Runner;
-	class MouseController;
+	class MovementController;
+	class DataController;
 	class Components;
 	class Router {
 	public:
-		explicit Router(Components& components);
+		explicit Router(WebServer& server, Components& components);
 		~Router();
 
-		void router(Runner& runner) const;
+		void router(WebServer& server) const;
 
 	private:
-		std::unique_ptr<MouseController> _mouse;
-
+		std::unique_ptr<MovementController> _movement;
+		std::unique_ptr<DataController> _data;
 	};
 }
 

@@ -1,12 +1,14 @@
 #include "Runner.hpp"
 
-#include "Controllers/MouseController.hpp"
-#include "Sensors/Range.hpp"
 #include "Components.hpp"
-#include "Utility.hpp"
+#include "Controllers/MovementController.hpp"
+#include "Hardware/Range.hpp"
 #include "Router.hpp"
+#include "Utility.hpp"
 
 #include <Arduino.h>
+#include <ESPmDNS.h>
+#include <WebServer.h>
 #include <WiFi.h>
 
 namespace Maze {
@@ -37,44 +39,31 @@ namespace Maze {
 		Serial.printf("[Runner:setup] Set Config:   ... %s", is(ok)) ;
 
 		WiFi.softAPsetHostname(HOSTNAME);
-		Serial.printf("[Runner:setup] Set Hostname: ... %s\r\n", is(ok)) ;
+		Serial.printf("[Runner:setup] Set Hostname: ... %s", is(ok)) ;
 
-		Serial.printf("[Runner:setup] MAC:      [%s]\r\n", WiFi.softAPmacAddress().c_str());
-		Serial.printf("[Runner:setup] Hostname: %s\r\n\r\n", HOSTNAME);
+		Serial.printf("\r\n");
 
-		Serial.printf("[Runner:setup] IP:       %s\r\n", WiFi.softAPIP().toString().c_str());
-		Serial.printf("[Runner:setup] AP:       %s\r\n", AP);
-		Serial.printf("[Runner:setup] Password: %s\r\n\r\n", PASSWORD);
+		Serial.printf("[Runner:setup] MAC:           [%s]\r\n", WiFi.softAPmacAddress().c_str());
+		Serial.printf("[Runner:setup] Hostname:      %s\r\n", HOSTNAME);
 
-		httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-		ok = httpd_start(&_server, &config);
-		Serial.printf("[Runner:setup] Starting http server: ... %s", is(ok == ESP_OK));
+		if (MDNS.begin(HOSTNAME)) {
+			Serial.printf("[Runner:setup] MDNS Hostname: %s\r\n", HOSTNAME);
+		}
 
-		_router = std::make_unique<Router>(*_components);
-		_router->router(*this);
+		Serial.printf("\r\n");
+		Serial.printf("[Runner:setup] IP:            %s\r\n", WiFi.softAPIP().toString().c_str());
+		Serial.printf("[Runner:setup] AP:            %s\r\n", AP);
+		Serial.printf("[Runner:setup] Password:      %s\r\n\r\n", PASSWORD);
+
+		_server = std::make_unique<WebServer>(80);
+		_router = std::make_unique<Router>(*_server, *_components);
+		_router->router(*_server);
+		_server->begin();
 	}
 
 	void Runner::loop() const {
 		_components->loop();
-	}
-
-	esp_err_t Runner::dispatch(httpd_req_t *r) {
-		auto* func = static_cast<Callable*>(r->user_ctx);
-		return (*func)(r);
-	}
-
-	void Runner::get(const char* route, const Callable& callable) {
-		auto pointer = std::make_unique<Callable>(callable);
-		auto context = pointer.get();
-		_callables.push_back(std::move(pointer));
-		httpd_uri_t data {
-				.uri = route,
-				.method = HTTP_GET,
-				.handler = &Runner::dispatch,
-				.user_ctx = context
-		};
-
-		httpd_register_uri_handler(_server, &data);
+		_server->handleClient();
 	}
 }
 

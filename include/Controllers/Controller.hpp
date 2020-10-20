@@ -2,20 +2,21 @@
 #define ARDUINO_FEATHER_CONTROLLER_HPP
 
 #include <ArduinoJson.hpp>
-#include <esp_http_server.h>
 
+class WebServer;
 namespace Maze {
 	class Components;
 	class Controller {
 	public:
-		explicit Controller(Components& components);
+		Controller(WebServer& server, Components& components);
 		virtual ~Controller();
 
 		virtual const char* name() = 0;
 
-		esp_err_t send(httpd_req_t* r, ArduinoJson::DynamicJsonDocument doc, const char* func);
+		void send(int status, ArduinoJson::DynamicJsonDocument doc, const char* func);
 
 	protected:
+		WebServer& _server;
 		Components& _components;
 	};
 }

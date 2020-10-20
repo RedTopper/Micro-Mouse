@@ -1,6 +1,6 @@
 #include "Components.hpp"
 
-#include "Sensors/Range.hpp"
+#include "Hardware/Range.hpp"
 
 namespace Maze {
 	Components::Components() {
