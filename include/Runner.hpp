@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-class WebServer;
+class AsyncWebServer;
 
 namespace Maze {
 	class Router;
@@ -17,10 +17,10 @@ namespace Maze {
 
 		void setup();
 		void loop() const;
-		WebServer& server() {return *_server;}
+		AsyncWebServer& server() {return *_server;}
 
 	private:
-		std::unique_ptr<WebServer> _server;
+		std::unique_ptr<AsyncWebServer> _server;
 		std::unique_ptr<Router> _router;
 		std::unique_ptr<Components> _components;
 	};

@@ -3,11 +3,11 @@
 
 #include "Controller.hpp"
 
-class WebServer;
+class AsyncWebServer;
 namespace Maze {
 	class MovementController : public Controller {
 	public:
-		explicit MovementController(WebServer& server, Components& components) : Controller(server, components) {};
+		explicit MovementController(Components& components) : Controller(components) {};
 		~MovementController() override;
 
 		enum class Movement {
@@ -19,9 +19,9 @@ namespace Maze {
 		const char* name() override {return "MouseController";}
 		static const char* getMovement(Movement movement);
 
-		void forward();
-		void stop();
-		void status();
+		void forward(AsyncWebServerRequest* r);
+		void stop(AsyncWebServerRequest* r);
+		void status(AsyncWebServerRequest* r);
 
 	private:
 		Movement _movement = Movement::STOP;

@@ -1,9 +1,9 @@
 #ifndef ARDUINO_FEATHER_ROUTER_HPP
 #define ARDUINO_FEATHER_ROUTER_HPP
 
-#include <memory>
-#include <WebServer.h>
+#include <ESPAsyncWebServer.h>
 
+#include <memory>
 
 namespace Maze {
 	class Runner;
@@ -12,10 +12,10 @@ namespace Maze {
 	class Components;
 	class Router {
 	public:
-		explicit Router(WebServer& server, Components& components);
+		explicit Router(AsyncWebServer& server, Components& components);
 		~Router();
 
-		void router(WebServer& server) const;
+		void router(AsyncWebServer& server) const;
 
 	private:
 		std::unique_ptr<MovementController> _movement;

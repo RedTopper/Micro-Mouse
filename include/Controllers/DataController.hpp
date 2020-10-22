@@ -7,12 +7,12 @@ class WebServer;
 namespace Maze {
 	class DataController : public Controller {
 	public:
-		explicit DataController(WebServer& server, Components& components) : Controller(server, components) {};
+		explicit DataController(Components& components) : Controller(components) {};
 		~DataController() override;
 
 		const char* name() override {return "DataController";}
 
-		void status();
+		void status(AsyncWebServerRequest* r);
 	};
 }
 

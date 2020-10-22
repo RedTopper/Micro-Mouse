@@ -5,6 +5,7 @@
 
 namespace Maze {
 	class Range;
+	class Motor;
 	class Components {
 	public:
 		Components();
@@ -13,9 +14,13 @@ namespace Maze {
 		void loop();
 
 		Range& rangeFront() {return *_rangeFront;}
+		Motor& motorLeft() {return *_motorLeft;}
+		Motor& motorRight() {return *_motorRight;}
 
 	private:
 		std::unique_ptr<Range> _rangeFront;
+		std::unique_ptr<Motor> _motorLeft;
+		std::unique_ptr<Motor> _motorRight;
 	};
 }
 

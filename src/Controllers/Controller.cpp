@@ -1,12 +1,14 @@
 #include "Controllers/Controller.hpp"
 
-#include <WebServer.h>
+#include <ESPAsyncWebServer.h>
+
+using Request = AsyncWebServerRequest;
 
 namespace Maze {
-	Controller::Controller(WebServer& server, Components& components) : _server(server), _components(components) {}
+	Controller::Controller(Components& components) : _components(components) {}
 	Controller::~Controller() = default;
 
-	void Controller::send(int status, ArduinoJson::DynamicJsonDocument doc, const char* func) {
+	void Controller::send(int status, Request* r, ArduinoJson::DynamicJsonDocument doc, const char* func) {
 		doc["action"] = func;
 		doc["controller"] = this->name();
 
@@ -14,6 +16,6 @@ namespace Maze {
 			doc["response"] = "ok";
 		}
 
-		_server.send(status, "application/json", doc.as<String>().c_str());
+		r->send(status, "application/json", doc.as<String>().c_str());
 	}
 }

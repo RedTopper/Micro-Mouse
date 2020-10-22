@@ -7,8 +7,8 @@
 #include "Utility.hpp"
 
 #include <Arduino.h>
+#include <ESPAsyncWebServer.h>
 #include <ESPmDNS.h>
-#include <WebServer.h>
 #include <WiFi.h>
 
 namespace Maze {
@@ -55,7 +55,7 @@ namespace Maze {
 		Serial.printf("[Runner:setup] AP:            %s\r\n", AP);
 		Serial.printf("[Runner:setup] Password:      %s\r\n\r\n", PASSWORD);
 
-		_server = std::make_unique<WebServer>(80);
+		_server = std::make_unique<AsyncWebServer>(80);
 		_router = std::make_unique<Router>(*_server, *_components);
 		_router->router(*_server);
 		_server->begin();
@@ -63,7 +63,6 @@ namespace Maze {
 
 	void Runner::loop() const {
 		_components->loop();
-		_server->handleClient();
 	}
 }
 
