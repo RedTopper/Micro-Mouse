@@ -3,38 +3,32 @@
 #include <Wire.h>
 
 namespace Maze {
-	Range::Range(uint16_t timeout) {
-		Wire.setTimeOut(3000);
+	Range::Range(uint8_t pin, uint8_t address) : _pin(pin), _address(address) {
 		_sensor = Adafruit_VL6180XInternal();
-		_initialized = _sensor.internalBegin();
-		_timeout = timeout;
+		pinMode(pin, OUTPUT);
 	}
 
 	Range::~Range() = default;
 
 	void Range::loop() {
-		if (!_initialized) {
-			_status = -1;
-			return;
-		}
-
 		uint8_t range;
-		if (_sensor.readRangeNoWait(range, 500)) {
-			Serial.printf("%d ", _range);
+		if (_sensor.readRangeNoWait(range)) {
 			_range = range;
 			_status = _sensor.readRangeStatus();
 		}
 	}
 
-	uint8_t Range::range() const {
+	uint8_t Range::getRange() const {
 		if (!_initialized) return -1;
 		return _range;
 	}
 
-	const char* Range::message() const {
+	const char* Range::getMessage() const {
 		switch (_status) {
 		case 255:
 			return "Failed to initialize";
+		case 0:
+			return "OK";
 		case VL6180X_ERROR_SYSERR_1:
 		case VL6180X_ERROR_SYSERR_1 + 1:
 		case VL6180X_ERROR_SYSERR_1 + 2:
@@ -62,55 +56,50 @@ namespace Maze {
 		}
 	}
 
+	bool Range::boot() {
+		_initialized = _sensor.internalBegin();
+		if (!_initialized) return false;
+		_sensor.setAddress(_address);
+		return true;
+	}
+
+
 	bool Adafruit_VL6180XInternal::readRangeNoWait(uint8_t& range, uint16_t timeout) {
-		if (_time == 0l) _time = millis();
-
-		if (timeout && millis() - _time > timeout) {
-			_state = State::IDLE;
-			_time = millis();
-			// Send reset signal?
-			Serial.printf("[Adafruit_VL6180XInternal::readRangeNoWait] Timeout.");
-		}
-
 		switch (_state) {
 		case State::IDLE:
 			// initiate a read
-			_ready = false;
 			_state = State::REQUEST;
-			_time = millis();
-			break;
+			_timeAbsolute = millis();
+			return false;
 
 		case State::REQUEST:
 			// wait for device to be ready for range measurement
 			if ((internalRead8(VL6180X_REG_RESULT_RANGE_STATUS) & 0x01u))
 				_state = State::TRIGGER;
-			break;
+			return false;
 
 		case State::TRIGGER:
 			// Start a range measurement
 			internalWrite8(VL6180X_REG_SYSRANGE_START, 0x01);
 			_state = State::WAIT;
-			break;
+			return false;
 
 		case State::WAIT:
 			// wait for data to be available, Poll until bit 2 is set
 			if ((internalRead8(VL6180X_REG_RESULT_INTERRUPT_STATUS_GPIO) & 0x04u))
 				_state = State::AVAILABLE;
-			break;
+			return false;
 
 		case State::AVAILABLE:
 			// read & cleanup, flag data is there
 			range = internalRead8(VL6180X_REG_RESULT_RANGE_VAL);
 			internalWrite8(VL6180X_REG_SYSTEM_INTERRUPT_CLEAR, 0x07);
 			_state = State::IDLE; // go back to Idle state
-			_ready = true;
-			break;
-
-		default: // should not happen!
-			break;
+			_timeLoop = millis() - _timeAbsolute;
+			return true;
 		}
 
-		return _ready;
+		return false;
 	}
 
 	uint8_t Adafruit_VL6180XInternal::internalRead8(uint16_t address) {

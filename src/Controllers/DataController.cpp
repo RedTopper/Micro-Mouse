@@ -12,9 +12,24 @@ namespace Maze {
 
 	void DataController::status(Request* r) {
 		ArduinoJson::DynamicJsonDocument doc(1024);
-		auto& front = _components.rangeFront();
-		doc["range"] = front.range();
-		doc["message"] = front.message();
+		std::array<Range*, 3> sensors = {
+			&_components.rangeFront(),
+			&_components.rangeLeft(),
+			&_components.rangeRight()
+		};
+
+		auto data = doc.createNestedObject("sensors");
+		for (const auto* sensor : sensors) {
+			String key;
+			key += sensor->getPin();
+			auto json = data.createNestedObject(key);
+			json["range"] = sensor->getRange();
+			json["message"] = sensor->getMessage();
+			json["ms"] = sensor->getTime();
+		}
+
+		doc["ms"] = _components.getTime();
+
 		send(200, r, doc, __func__);
 	}
 }

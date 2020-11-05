@@ -23,6 +23,9 @@ namespace Maze {
 		_components = std::make_unique<Components>();
 		Serial.printf("[Runner:setup] Components created!\r\n");
 
+		_components->setup();
+		Serial.printf("[Runner:setup] Components set up!\r\n");
+
 		bool ok;
 		IPAddress ip(172, 16, 0, 1);
 		IPAddress mask(255, 255, 255, 0);
@@ -59,6 +62,8 @@ namespace Maze {
 		_router = std::make_unique<Router>(*_server, *_components);
 		_router->router(*_server);
 		_server->begin();
+
+		Serial.printf("[Runner:setup] Setup Complete!\r\n");
 	}
 
 	void Runner::loop() const {
