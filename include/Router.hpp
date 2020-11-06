@@ -5,6 +5,9 @@
 
 #include <memory>
 
+class AsyncWebSocket;
+class AsyncWebServer;
+
 namespace Maze {
 	class Runner;
 	class MovementController;
@@ -15,9 +18,11 @@ namespace Maze {
 		explicit Router(AsyncWebServer& server, Components& components);
 		~Router();
 
-		void router(AsyncWebServer& server) const;
+		void router();
 
 	private:
+		AsyncWebServer& _server;
+		std::unique_ptr<AsyncWebSocket> _socket;
 		std::unique_ptr<MovementController> _movement;
 		std::unique_ptr<DataController> _data;
 	};

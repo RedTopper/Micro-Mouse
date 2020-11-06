@@ -4,6 +4,7 @@
 #include "Controller.hpp"
 
 class AsyncWebServer;
+class AsyncWebSocket;
 namespace Maze {
 	class MovementController : public Controller {
 	public:
@@ -23,8 +24,12 @@ namespace Maze {
 		void stop(AsyncWebServerRequest* r);
 		void status(AsyncWebServerRequest* r);
 
+		void socket(AsyncWebSocketClient* client, AwsEventType type, void* arg, uint8_t* data, size_t len);
+
 	private:
 		Movement _movement = Movement::STOP;
+
+		void move(ArduinoJson::DynamicJsonDocument& request);
 	};
 }
 

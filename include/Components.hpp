@@ -8,7 +8,7 @@ namespace Maze {
 	class Motor;
 	class Components {
 	public:
-		Components();
+		Components(uint8_t pinEnable);
 		~Components();
 
 		void setup();
@@ -30,8 +30,10 @@ namespace Maze {
 		std::unique_ptr<Motor> _motorLeft;
 		std::unique_ptr<Motor> _motorRight;
 
-		unsigned long _timeAbsolute;
-		unsigned long _timeLoop;
+		unsigned long _timeAbsolute = 0;
+		unsigned long _timeLoop = 0;
+
+		uint8_t _pinEnable;
 	};
 }
 

@@ -20,7 +20,7 @@ namespace Maze {
 	Runner::~Runner() = default;
 
 	void Runner::setup() {
-		_components = std::make_unique<Components>();
+		_components = std::make_unique<Components>(13);
 		Serial.printf("[Runner:setup] Components created!\r\n");
 
 		_components->setup();
@@ -60,7 +60,7 @@ namespace Maze {
 
 		_server = std::make_unique<AsyncWebServer>(80);
 		_router = std::make_unique<Router>(*_server, *_components);
-		_router->router(*_server);
+		_router->router();
 		_server->begin();
 
 		Serial.printf("[Runner:setup] Setup Complete!\r\n");

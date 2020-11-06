@@ -5,13 +5,14 @@
 #include "Hardware/Motor.hpp"
 
 namespace Maze {
-	Components::Components() {
+	Components::Components(uint8_t pinEnable) {
 		_rangeFront = std::make_unique<Range>(4, 0x30);
 		_rangeLeft = std::make_unique<Range>(21, 0x31);
 		_rangeRight = std::make_unique<Range>(27, 0x32);
-
-		//_motorLeft = std::make_unique<Motor>(33, 0);
-		//_motorRight = std::make_unique<Motor>(27, 1);
+		_motorLeft = std::make_unique<Motor>(32, 14, 26, 1, false);
+		_motorRight = std::make_unique<Motor>(33, 15, 25, 3, true);
+		_pinEnable = pinEnable;
+		pinMode(pinEnable, OUTPUT);
 	}
 
 	Components::~Components() = default;
@@ -52,5 +53,11 @@ namespace Maze {
 		_rangeLeft->loop();
 		_rangeRight->loop();
 		_timeLoop = millis() - _timeAbsolute;
+
+		if (_motorLeft->enabled() || _motorRight->enabled()) {
+			digitalWrite(_pinEnable, HIGH);
+		} else {
+			digitalWrite(_pinEnable, LOW);
+		}
 	}
 }
