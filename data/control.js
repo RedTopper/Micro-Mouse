@@ -7,6 +7,7 @@ function log(message) {
 }
 
 let socket = new WebSocket("ws://172.16.0.1/ws");
+let gp = null;
 
 socket.onopen = function(e) {
 	let greet = {
@@ -41,3 +42,18 @@ function set(left, right) {
 
 	socket.send(JSON.stringify(motors));
 }
+
+window.addEventListener("gamepadconnected", function(e)
+{
+	gp = navigator.getGamepads()[0];
+	console.log("game pad connected" + gp.axes)
+});
+
+setInterval(function() {
+	if(!gp)  return;
+	gp = navigator.getGamepads()[0];
+	var left = Math.abs(gp.axes[1]) > 0.1 ? gp.axes[1] : 0;
+	var right = Math.abs(gp.axes[3]) > 0.1 ? gp.axes[3] : 0;
+	// console.log("Left: " + left + " " + "Right: " + right);
+	set(left, right);
+}, 1000);
