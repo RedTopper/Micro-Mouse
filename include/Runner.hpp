@@ -16,13 +16,20 @@ namespace Maze {
 		~Runner();
 
 		void setup();
-		void loop() const;
+		void loop(int frequency);
 		AsyncWebServer& server() {return *_server;}
+
+        unsigned int getTimeCompute() const {return _timeCompute;}
+        unsigned int getTimeLoop() const {return _timeLoop;}
 
 	private:
 		std::unique_ptr<AsyncWebServer> _server;
 		std::unique_ptr<Router> _router;
 		std::unique_ptr<Components> _components;
+
+        unsigned long _timeAbsolute = 0;
+        unsigned long _timeLoop = 0;
+        unsigned long _timeCompute = 0;
 	};
 }
 

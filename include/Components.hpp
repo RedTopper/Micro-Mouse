@@ -4,34 +4,33 @@
 #include <memory>
 
 namespace Maze {
-	class Range;
-	class Motor;
+	class RangeComponent;
+	class MotorComponent;
+	class Runner;
 	class Components {
 	public:
-		Components(uint8_t pinEnable);
+		Components(Runner& runner, uint8_t pinEnable);
 		~Components();
 
 		void setup();
-		void loop();
+		void loop(double dilation);
 
-		Range& rangeFront() {return *_rangeFront;}
-		Range& rangeLeft() {return *_rangeLeft;}
-		Range& rangeRight() {return *_rangeRight;}
-		Motor& motorLeft() {return *_motorLeft;}
-		Motor& motorRight() {return *_motorRight;}
-
-		unsigned int getTime() const {return _timeLoop;}
+		RangeComponent& rangeFront() {return *_rangeFront;}
+		RangeComponent& rangeLeft() {return *_rangeLeft;}
+		RangeComponent& rangeRight() {return *_rangeRight;}
+		MotorComponent& motorLeft() {return *_motorLeft;}
+		MotorComponent& motorRight() {return *_motorRight;}
+		Runner& runner() const {return _runner;}
 
 	private:
-		std::unique_ptr<Range> _rangeFront;
-		std::unique_ptr<Range> _rangeLeft;
-		std::unique_ptr<Range> _rangeRight;
+	    Runner& _runner;
 
-		std::unique_ptr<Motor> _motorLeft;
-		std::unique_ptr<Motor> _motorRight;
+		std::unique_ptr<RangeComponent> _rangeFront;
+		std::unique_ptr<RangeComponent> _rangeLeft;
+		std::unique_ptr<RangeComponent> _rangeRight;
 
-		unsigned long _timeAbsolute = 0;
-		unsigned long _timeLoop = 0;
+		std::unique_ptr<MotorComponent> _motorLeft;
+		std::unique_ptr<MotorComponent> _motorRight;
 
 		uint8_t _pinEnable;
 	};

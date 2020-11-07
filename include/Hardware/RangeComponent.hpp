@@ -1,5 +1,7 @@
-#ifndef MICRO_MOUSE_RANGE_HPP
-#define MICRO_MOUSE_RANGE_HPP
+#ifndef MICRO_MOUSE_RANGECOMPONENT_HPP
+#define MICRO_MOUSE_RANGECOMPONENT_HPP
+
+#include "Hardware/Component.hpp"
 
 #include <Adafruit_VL6180X.h>
 
@@ -15,7 +17,7 @@ namespace Maze {
 
 	public:
 		bool internalBegin(TwoWire *theWire = nullptr);
-		bool readRangeNoWait(uint8_t &range, uint16_t timeout = 0);
+		bool readRangeNoWait(uint8_t &range);
 
 		uint8_t internalRead8(uint16_t address);
 		void internalWrite8(uint16_t address, uint8_t data);
@@ -26,16 +28,18 @@ namespace Maze {
 		TwoWire* _internalWire = nullptr;
 		State _state = State::IDLE;
 
-		unsigned int _timeAbsolute;
-		unsigned int _timeLoop;
+		unsigned int _timeAbsolute{};
+		unsigned int _timeLoop{};
 	};
 
-	class Range {
+	class RangeComponent : public Component {
 	public:
-		Range(uint8_t pin, uint8_t address);
-		~Range();
+		RangeComponent(uint8_t pin, uint8_t address, const char* name);
+		~RangeComponent();
 
-		void loop();
+		void loop(double dilation) override;
+
+		const char* name() const override {return _name;}
 
 		const char* getMessage() const;
 		uint8_t getRange() const;
@@ -54,8 +58,10 @@ namespace Maze {
 		uint8_t _pin;
 		uint8_t _address;
 
+		const char* _name;
+
 		Adafruit_VL6180XInternal _sensor;
 	};
 }
 
-#endif //MICRO_MOUSE_RANGE_HPP
+#endif //MICRO_MOUSE_RANGECOMPONENT_HPP

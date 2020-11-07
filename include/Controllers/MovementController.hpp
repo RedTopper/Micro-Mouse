@@ -17,7 +17,7 @@ namespace Maze {
 			BACKWARDS
 		};
 
-		const char* name() override {return "MouseController";}
+		const char* name() const override {return "MouseController";}
 		static const char* getMovement(Movement movement);
 
 		void forward(AsyncWebServerRequest* r);

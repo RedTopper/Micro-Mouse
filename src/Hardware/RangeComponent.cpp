@@ -1,16 +1,20 @@
-#include "Hardware/Range.hpp"
+#include "Hardware/RangeComponent.hpp"
 
 #include <Wire.h>
 
 namespace Maze {
-	Range::Range(uint8_t pin, uint8_t address) : _pin(pin), _address(address) {
+	RangeComponent::RangeComponent(uint8_t pin, uint8_t address, const char* name) :
+			_pin(pin),
+			_address(address),
+			_name(name) {
 		_sensor = Adafruit_VL6180XInternal();
 		pinMode(pin, OUTPUT);
 	}
 
-	Range::~Range() = default;
+	RangeComponent::~RangeComponent() = default;
 
-	void Range::loop() {
+	void RangeComponent::loop(double) {
+        if (!_initialized) return;
 		uint8_t range;
 		if (_sensor.readRangeNoWait(range)) {
 			_range = range;
@@ -18,12 +22,12 @@ namespace Maze {
 		}
 	}
 
-	uint8_t Range::getRange() const {
-		if (!_initialized) return -1;
+	uint8_t RangeComponent::getRange() const {
+		if (!_initialized) return 255;
 		return _range;
 	}
 
-	const char* Range::getMessage() const {
+	const char* RangeComponent::getMessage() const {
 		switch (_status) {
 		case 255:
 			return "Failed to initialize";
@@ -56,7 +60,7 @@ namespace Maze {
 		}
 	}
 
-	bool Range::boot() {
+	bool RangeComponent::boot() {
 		_initialized = _sensor.internalBegin();
 		if (!_initialized) return false;
 		_sensor.setAddress(_address);
@@ -64,7 +68,7 @@ namespace Maze {
 	}
 
 
-	bool Adafruit_VL6180XInternal::readRangeNoWait(uint8_t& range, uint16_t timeout) {
+	bool Adafruit_VL6180XInternal::readRangeNoWait(uint8_t& range) {
 		switch (_state) {
 		case State::IDLE:
 			// initiate a read

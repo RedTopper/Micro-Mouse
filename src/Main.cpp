@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-Maze::Runner* runner;
+Maze::Runner *runner;
 
 void setup() {
 	Serial.begin(115200);
@@ -12,5 +12,6 @@ void setup() {
 }
 
 void loop() {
-	runner->loop();
+	// Run the main loop at 200tps
+	runner->loop(200);
 }

@@ -1,7 +1,7 @@
 #include "Controllers/MovementController.hpp"
 
 #include "Components.hpp"
-#include "Hardware/Motor.hpp"
+#include "Hardware/MotorComponent.hpp"
 
 #include <ArduinoJson.hpp>
 #include <ESPAsyncWebServer.h>
@@ -14,16 +14,16 @@ namespace Maze {
 
 	void MovementController::forward(Request* r) {
 		ArduinoJson::DynamicJsonDocument doc(1024);
-		_components.motorLeft().speed(0.5);
-		_components.motorRight().speed(0.5);
+        _components.motorLeft().setSpeed(0.5);
+        _components.motorRight().setSpeed(0.5);
 		_movement = Movement::FORWARDS;
 		send(200, r, doc, __func__);
 	}
 
 	void MovementController::stop(Request* r) {
 		ArduinoJson::DynamicJsonDocument doc(1024);
-		_components.motorLeft().speed(0);
-		_components.motorRight().speed(0);
+        _components.motorLeft().setSpeed(0);
+        _components.motorRight().setSpeed(0);
 		_movement = Movement::STOP;
 		send(200, r, doc, __func__);
 	}
@@ -49,8 +49,8 @@ namespace Maze {
 		    request.containsKey("right") && request["right"].is<double>()) {
 			double left = request["left"];
 			double right = request["right"];
-			_components.motorLeft().speed(left);
-			_components.motorRight().speed(right);
+            _components.motorLeft().setSpeed(left);
+            _components.motorRight().setSpeed(right);
 			Serial.printf("[MovementController:socket] left %f, right %f!\r\n", left, right);
 		}
 	}

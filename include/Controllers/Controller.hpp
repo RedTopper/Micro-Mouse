@@ -11,7 +11,7 @@ namespace Maze {
 		explicit Controller(Components& components);
 		virtual ~Controller();
 
-		virtual const char* name() = 0;
+		virtual const char* name() const = 0;
 
 		void send(int status, AsyncWebServerRequest* request, ArduinoJson::DynamicJsonDocument document, const char* functionName);
 

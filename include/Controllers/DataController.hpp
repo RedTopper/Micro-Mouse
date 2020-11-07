@@ -10,7 +10,7 @@ namespace Maze {
 		explicit DataController(Components& components) : Controller(components) {};
 		~DataController() override;
 
-		const char* name() override {return "DataController";}
+		const char* name() const override {return "DataController";}
 
 		void status(AsyncWebServerRequest* r);
 	};

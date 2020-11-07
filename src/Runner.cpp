@@ -2,7 +2,7 @@
 
 #include "Components.hpp"
 #include "Controllers/MovementController.hpp"
-#include "Hardware/Range.hpp"
+#include "Hardware/RangeComponent.hpp"
 #include "Router.hpp"
 #include "Utility.hpp"
 
@@ -12,15 +12,16 @@
 #include <WiFi.h>
 
 namespace Maze {
-	const char* HOSTNAME = "micromouse";
-	const char* AP = "micromouse";
-	const char* PASSWORD = "micromouse-password";
+	const char *HOSTNAME = "micromouse";
+	const char *AP = "micromouse";
+	const char *PASSWORD = "micromouse-password";
 
 	Runner::Runner() = default;
+
 	Runner::~Runner() = default;
 
 	void Runner::setup() {
-		_components = std::make_unique<Components>(13);
+		_components = std::make_unique<Components>(*this, 13);
 		Serial.printf("[Runner:setup] Components created!\r\n");
 
 		_components->setup();
@@ -31,18 +32,18 @@ namespace Maze {
 		IPAddress mask(255, 255, 255, 0);
 
 		ok = WiFiClass::mode(WIFI_AP);
-		Serial.printf("[Runner:setup] Set AP Mode:  ... %s", is(ok)) ;
+		Serial.printf("[Runner:setup] Set AP Mode:  ... %s", is(ok));
 
 		ok = WiFi.softAP(AP, PASSWORD);
-		Serial.printf("[Runner:setup] Set Soft AP:  ... %s", is(ok)) ;
+		Serial.printf("[Runner:setup] Set Soft AP:  ... %s", is(ok));
 
 		delay(100);
 
 		WiFi.softAPConfig(ip, ip, mask);
-		Serial.printf("[Runner:setup] Set Config:   ... %s", is(ok)) ;
+		Serial.printf("[Runner:setup] Set Config:   ... %s", is(ok));
 
 		WiFi.softAPsetHostname(HOSTNAME);
-		Serial.printf("[Runner:setup] Set Hostname: ... %s", is(ok)) ;
+		Serial.printf("[Runner:setup] Set Hostname: ... %s", is(ok));
 
 		Serial.printf("\r\n");
 
@@ -66,8 +67,20 @@ namespace Maze {
 		Serial.printf("[Runner:setup] Setup Complete!\r\n");
 	}
 
-	void Runner::loop() const {
-		_components->loop();
+	void Runner::loop(int frequency) {
+		// Compute the fraction of a second it took for the last loop
+		double dilation = (double) _timeLoop / 1000.0;
+
+		// Start timer
+		_timeAbsolute = millis();
+
+		_components->loop(dilation);
+		// Other loop-able stuff here
+
+		// Calculate times
+		_timeCompute = millis() - _timeAbsolute;
+		delay(clamp(1000.0 / frequency - _timeCompute, 0, 1000));
+		_timeLoop = millis() - _timeAbsolute;
 	}
 }
 
