@@ -25,7 +25,6 @@ int toArr( int x, int y );
 int legal( int x, int y );
 void Visit( int x, int y );
 uint8_t grid[WIDTH*HEIGHT];
-uint8_t mouseMap[WIDTH*HEIGHT];
 //testing still
 uint8_t mouseBinMap[WIDTH*HEIGHT];
 // 00 0000 - playerOn? visited? northwall? eastwall? southwall? westwall?
@@ -225,17 +224,6 @@ string pathFind(int &xStart, int &yStart, int &xFinish, int &yFinish)
 }
 
 void initGrid() { for (int i=0; i<(WIDTH)*(HEIGHT); ++i) grid[i] = 1; }
-void initMouseMap() {
-    for(int y=0;y<HEIGHT;y++) {
-        for (int x = 0; x < WIDTH; x++) {
-            if (y==0 || y==HEIGHT-1 || x==0 || x==WIDTH-1) mouseMap[toArr(x, y)] = 1;
-            else  mouseMap[toArr(x, y)] = 5;
-
-            if (y==0 || y==HEIGHT-1 || x==0 || x==WIDTH-1) mouseBinMap[toArr(x, y)] = 0b001111;
-            else  mouseBinMap[toArr(x, y)] = 0b000000;
-        }
-    }
-}
 int toArr(int x, int y) { return y * WIDTH + x; }
 int legal(int x, int y) { return !(x < 0 || x >= WIDTH) && !(y < 0 || y >= HEIGHT); }
 
@@ -332,11 +320,6 @@ void scanBitNear(int currX, int currY) {
     //instead of updating using grid, we would just update mouse map with each scanners results
     // would instead use scanner input, assign 0 if nothing in next cell (dist > a number) else 1 (dist < a number)
 
-    //left scanner, middle scanner, right scanner
-    mouseMap[toArr(currX+dx[leftDir(mouseDir)], currY+dy[leftDir(mouseDir)])] = grid[toArr(currX+dx[leftDir(mouseDir)], currY+dy[leftDir(mouseDir)])];
-    mouseMap[toArr(currX+dx[mouseDir], currY+dy[mouseDir])] = grid[toArr(currX+dx[mouseDir], currY+dy[mouseDir])];
-    mouseMap[toArr(currX+dx[rightDir(mouseDir)], currY+dy[rightDir(mouseDir)])] = grid[toArr(currX+dx[rightDir(mouseDir)], currY+dy[rightDir(mouseDir)])];
-
     setWalls(currX, currY,
              (grid[toArr(currX+dx[leftDir(mouseDir)], currY+dy[leftDir(mouseDir)])] == 1),
              (grid[toArr(currX+dx[mouseDir], currY+dy[mouseDir])] == 1),
@@ -359,7 +342,6 @@ void calculateGoal() {
                 cout<<"found goal at ("<<xGoal<<", "<<yGoal<<")"<<endl;
                 return;
             }
-
         }
     }
     cout<<"404 goal not found"<<endl;
@@ -437,14 +419,11 @@ vector<int> toInstructs(string& route)
     }
     return instructs;
 }
+vector<int> getInstructs() {
 
-int main() {
     // create empty map
     initGrid();
     printMaze(grid);
-
-    //create empty mouse map
-    initMouseMap();
 
     // make maze
     mazeGen(1,1);
@@ -455,15 +434,10 @@ int main() {
     int xS=1, yS=1;
     int startDir = mouseDir;
 
-    printMaze(mouseMap);
-
     //flood then clean
     flood(xS, yS);
     translateToDir(startDir);
-    cleanMaze(mouseMap);
 
-    //print mouse and mousebin maps, then calculate goal
-    printMaze(mouseMap);
     printBinMap();
     calculateGoal();
 
@@ -475,38 +449,17 @@ int main() {
     cout<<"starts at ("<<xS<<","<<yS<<')'<<endl;
     cout<<"ends at ("<<xGoal<<","<<yGoal<<')'<<endl;
 
-    //a*
     string route=pathFind(xS, yS, xGoal, yGoal);
     vector<int> instructs = toInstructs(route);
 
-    if(route.length()>0)
-    {
-        int j;
-        int x=xS;
-        int y=yS;
-        mouseMap[ toArr(x,y) ]=2;
-
-        for(int i=0;i<route.length();i++)
-        {
-            j = route[i] - 48;
-            x=x+dx[j];
-            y=y+dy[j];
-            mouseMap[toArr(x,y)]=3;
+    //instructions
+    for(int i=0; i<=instructs.size()-1; i++){
+        switch (instructs[i]) {
+            case -1: cout<<"left turn"<<endl;break;
+            case 0: cout<<"right turn"<<endl;break;
+            default : cout<<"forward "<<instructs[i]<<endl;break;
         }
-
-        mouseMap[toArr(x,y)]=4;
-
-        //instructions
-        for(int i=0; i<=instructs.size()-1; i++){
-            switch (instructs[i]) {
-                case -1: cout<<"left turn"<<endl;break;
-                case 0: cout<<"right turn"<<endl;break;
-                default : cout<<"forward "<<instructs[i]<<endl;break;
-            }
-        }
-
-        // display the map with the route
-        printMaze(mouseMap);
     }
-    return(-1);
+
+    return instructs;
 }
