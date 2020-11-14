@@ -1,8 +1,9 @@
-#include <Utility.hpp>
+#include "Utility.hpp"
 #include "Components.hpp"
 
-#include "Hardware/RangeComponent.hpp"
+#include "Hardware/EncoderComponent.hpp"
 #include "Hardware/MotorComponent.hpp"
+#include "Hardware/RangeComponent.hpp"
 
 namespace Maze {
 	Components::Components(Runner &runner, uint8_t pinEnable) : _runner(runner) {
@@ -11,6 +12,8 @@ namespace Maze {
 		_rangeRight = std::make_unique<RangeComponent>(27, 0x32, "right");
 		_motorLeft  = std::make_unique<MotorComponent>(32, 14, 26, 1, false, "left");
 		_motorRight = std::make_unique<MotorComponent>(33, 15, 25, 3, true, "right");
+		_encoderLeft = std::make_unique<EncoderComponent>(39, 150, 40.0, "left");
+		_encoderRight = std::make_unique<EncoderComponent>(34, 150, 40.0,  "right");
 		_pinEnable  = pinEnable;
 		pinMode(pinEnable, OUTPUT);
 	}
@@ -53,6 +56,7 @@ namespace Maze {
 		_rangeRight->loop(dilation);
 		_motorLeft->loop(dilation);
 		_motorRight->loop(dilation);
+		_encoderLeft->loop(dilation);
 
 		if (_motorLeft->isEnabled() || _motorRight->isEnabled()) {
 			digitalWrite(_pinEnable, HIGH);

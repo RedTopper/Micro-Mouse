@@ -6,6 +6,7 @@
 namespace Maze {
 	class RangeComponent;
 	class MotorComponent;
+	class EncoderComponent;
 	class Runner;
 	class Components {
 	public:
@@ -20,10 +21,13 @@ namespace Maze {
 		RangeComponent& rangeRight() {return *_rangeRight;}
 		MotorComponent& motorLeft() {return *_motorLeft;}
 		MotorComponent& motorRight() {return *_motorRight;}
+		EncoderComponent& encoderLeft() {return *_encoderLeft;}
+		EncoderComponent& encoderRight() {return *_encoderRight;}
+
 		Runner& runner() const {return _runner;}
 
 	private:
-	    Runner& _runner;
+		Runner& _runner;
 
 		std::unique_ptr<RangeComponent> _rangeFront;
 		std::unique_ptr<RangeComponent> _rangeLeft;
@@ -31,6 +35,9 @@ namespace Maze {
 
 		std::unique_ptr<MotorComponent> _motorLeft;
 		std::unique_ptr<MotorComponent> _motorRight;
+
+		std::unique_ptr<EncoderComponent> _encoderLeft;
+		std::unique_ptr<EncoderComponent> _encoderRight;
 
 		uint8_t _pinEnable;
 	};

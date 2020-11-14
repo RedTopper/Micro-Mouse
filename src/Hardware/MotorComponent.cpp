@@ -4,7 +4,6 @@
 
 #include <Arduino.h>
 
-
 #define LEDC_BASE_FREQ     5000
 #define LEDC_TIMER_13_BIT  13
 #define LEDC_TIMER_13_BIT_MAX 8191

@@ -3,6 +3,7 @@
 #include "Components.hpp"
 #include "Hardware/RangeComponent.hpp"
 #include "Hardware/MotorComponent.hpp"
+#include "Hardware/EncoderComponent.hpp"
 #include "Runner.hpp"
 
 #include <ESPAsyncWebServer.h>
@@ -25,6 +26,11 @@ namespace Maze {
 				&_components.motorRight()
 		};
 
+		std::array<EncoderComponent*, 2> encoders = {
+				&_components.encoderLeft(),
+				&_components.encoderRight()
+		};
+
 		auto dataSensors = doc.createNestedObject("sensors");
 		for (const auto* sensor : sensors) {
 			auto json = dataSensors.createNestedObject(sensor->name());
@@ -39,6 +45,13 @@ namespace Maze {
 			auto json = dataMotors.createNestedObject(motor->name());
 			json["speedTarget"] = motor->getSpeedTarget();
 			json["speedCurrent"] = motor->getSpeedCurrent();
+		}
+
+		auto dataEncoders = doc.createNestedObject("encoders");
+		for (const auto* encoder : encoders) {
+			auto json = dataEncoders.createNestedObject(encoder->name());
+			json["ticks"] = encoder->getTicks();
+			json["distance"] = encoder->getDistance();
 		}
 
 		doc["msProcess"] = _components.runner().getTimeCompute();
