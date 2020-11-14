@@ -2,9 +2,11 @@
 #include <iomanip>
 #include <queue>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <ctime>
 #include <memory>
+#include <cstdio>
+#include <cstdlib>
 using namespace std;
 using std::hex;
 #define WIDTH 15
@@ -135,8 +137,7 @@ string pathFind(int &xStart, int &yStart, int &xFinish, int &yFinish)
     }
 
     // create the start node and push into list of open nodes
-    shared_ptr<node> n0;
-    n0 = make_shared<node>(xStart, yStart, 0, 0);
+    shared_ptr<node> n0 = make_shared<node>(xStart, yStart, 0, 0);
     n0->updatePriority(xFinish, yFinish);
     pq[pqi].push(*n0);
     openMap[xStart][yStart]=n0->priority; // mark it on the open nodes map
@@ -223,8 +224,7 @@ string pathFind(int &xStart, int &yStart, int &xFinish, int &yFinish)
     return "";
 }
 
-int toArr(int x, int y) { return y * WIDTH + x; }
-void initGrid() { for (int i=0; i<WIDTH*HEIGHT; ++i) grid[i] = 1; }
+void initGrid() { for (int i=0; i<(WIDTH)*(HEIGHT); ++i) grid[i] = 1; }
 void initMouseMap() {
     for(int y=0;y<HEIGHT;y++) {
         for (int x = 0; x < WIDTH; x++) {
@@ -236,8 +236,43 @@ void initMouseMap() {
         }
     }
 }
-
+int toArr(int x, int y) { return y * WIDTH + x; }
 int legal(int x, int y) { return !(x < 0 || x >= WIDTH) && !(y < 0 || y >= HEIGHT); }
+
+void mazeGen(int x, int y) {
+    grid[toArr(x,y)] = 0;
+
+    int dirs[4] = {NORTH, EAST, SOUTH, WEST};
+
+    for (int i=0; i<4; ++i)
+    {
+        int r = rand() & 3;
+        int temp = dirs[r];
+        dirs[r] = dirs[i];
+        dirs[i] = temp;
+    }
+    for (int i=0; i<4; ++i)
+    {
+        int dx=0, dy=0;
+        switch (dirs[i])
+        {
+            case NORTH: dy = -1; break;
+            case SOUTH: dy = 1; break;
+            case EAST: dx = 1; break;
+            case WEST: dx = -1; break;
+        }
+        int x2 = x + (dx<<1);
+        int y2 = y + (dy<<1);
+        if (legal(x2,y2))
+        {
+            if (grid[toArr(x2,y2)] == 1)
+            {
+                grid[toArr(x2-dx,y2-dy)] = 0;
+                mazeGen(x2,y2);
+            }
+        }
+    }
+}
 
 void printMaze(uint8_t maze[], int pX=-1, int pY=-1) {
     for(int y=0;y<HEIGHT;y++)
@@ -270,6 +305,16 @@ void cleanMaze(uint8_t maze[]) {
             if(maze[toArr(x, y)]==5 || maze[toArr(x, y)]==6 || maze[toArr(x, y)] == 7) maze[toArr(x,y)]=0;
         }
     }
+}
+
+void printBinMap() {
+    for(int y=0;y<HEIGHT;y++) {
+        for(int x=0;x<WIDTH;x++) {
+            printf("%01x", mouseBinMap[toArr(x, y)]);
+        }
+        cout<<endl;
+    }
+    cout<<endl;
 }
 
 //trust me :)
@@ -394,13 +439,15 @@ vector<int> toInstructs(string& route)
 }
 
 int main() {
-
     // create empty map
     initGrid();
     printMaze(grid);
 
     //create empty mouse map
     initMouseMap();
+
+    // make maze
+    mazeGen(1,1);
 
     // fresh map
     printMaze(grid);
@@ -417,6 +464,7 @@ int main() {
 
     //print mouse and mousebin maps, then calculate goal
     printMaze(mouseMap);
+    printBinMap();
     calculateGoal();
 
     if (xGoal == -1 && yGoal == -1){
