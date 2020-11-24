@@ -16,9 +16,9 @@ namespace Maze {
 	void DataController::status(Request* r) {
 		ArduinoJson::DynamicJsonDocument doc(1024);
 		std::array<RangeComponent*, 3> sensors = {
-			&_components.rangeFront(),
-			&_components.rangeLeft(),
-			&_components.rangeRight()
+				&_components.rangeFront(),
+				&_components.rangeLeft(),
+				&_components.rangeRight()
 		};
 
 		std::array<MotorComponent*, 2> motors = {

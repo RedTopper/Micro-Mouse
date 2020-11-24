@@ -49,8 +49,8 @@ namespace Maze {
 		    request.containsKey("right") && request["right"].is<double>()) {
 			double left = request["left"];
 			double right = request["right"];
-            _components.motorLeft().setSpeed(left);
-            _components.motorRight().setSpeed(right);
+			_components.motorLeft().setSpeed(left);
+			_components.motorRight().setSpeed(right);
 			Serial.printf("[MovementController:socket] left %f, right %f!\r\n", left, right);
 		}
 	}
