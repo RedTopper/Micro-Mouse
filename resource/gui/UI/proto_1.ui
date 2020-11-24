@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MicroMouse</class>
+ <widget class="QMainWindow" name="MicroMouse">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>543</width>
+    <height>465</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="imageLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>271</width>
+      <height>271</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="lineWidth">
+     <number>2</number>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>90</y>
+      <width>181</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Welcome to</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::AutoText</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="beginMaze">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>230</y>
+      <width>151</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Begin Maze</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="logs">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>290</y>
+      <width>151</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Logs</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>140</y>
+      <width>201</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Micro Mouse</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>543</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuMicro_Mouse">
+    <property name="title">
+     <string>Micro Mouse</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuMaze">
+    <property name="title">
+     <string>Maze</string>
+    </property>
+    <addaction name="separator"/>
+   </widget>
+   <addaction name="menuMicro_Mouse"/>
+   <addaction name="menuMaze"/>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
