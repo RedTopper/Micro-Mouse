@@ -1,0 +1,14 @@
+Item#,Item type,Qty,Cost,Subtotal,Part#,Supplier,Supplier#,Direct Link
+1,Feather,1,$19.95 ,$19.95 ,3405,Digi-Key,1528-2181-ND,https://www.digikey.com/en/products/detail/adafruit-industries-llc/3405/7244967
+2,Motor Controller,1,$3.42 ,$3.42 ,713,Digi-Key,2183-713-ND,https://www.digikey.com/en/products/detail/pololu-corporation/713/10450399
+3,Magnetic Encoder,1,$7.95 ,$7.95 ,4761,Digi-Key,2183-4761-ND,https://www.digikey.com/en/products/detail/pololu-corporation/4761/11586947
+4,Wheels,1,$3.75 ,$3.75 ,1452,Digi-Key,2183-1452-ND,https://www.digikey.com/en/products/detail/pololu-corporation/1452/10449864
+5,Motors,2,$18.95 ,$37.90 ,3053,Digi-Key,2183-3053-ND,https://www.digikey.com/en/products/detail/pololu-corporation/3053/10450055
+6,DC/DC 3.7 to 12v,1,$12.95 ,$12.95 ,2895,Digi-Key,2183-2895-ND,https://www.digikey.com/en/products/detail/pololu-corporation/2895/10451206
+7,ToF Sensors,3,$8.49 ,$25.47 ,2489,Digi-Key,2183-2489-ND,https://www.digikey.com/en/products/detail/pololu-corporation/2489/10451115
+8,Battery 3.7v (4.2),1,$9.95 ,$9.95 ,PRT-13813,Digi-Key,1568-1492-ND,https://www.digikey.com/en/products/detail/sparkfun-electronics/PRT-13813/6605198
+9,Encoder Wires,2,$0.95 ,$1.90 ,4762,Digi-Key,2183-4762-ND,https://www.digikey.com/en/products/detail/pololu-corporation/4762/11586944
+10,".3.6-pin 0.1"" Short Break-away Male Header - Pack of 10",1,$4.95 ,$4.95 ,3009,adafruit,,https://www.adafruit.com/product/392
+11,"0.1"" 36-pin Strip Right-Angle Female/Socket Header (5 pack)",1,$2.95 ,$2.95 ,1542,adafruit,,https://www.adafruit.com/product/598
+,,,,,,,,
+,TOTAL,19,,$131.14 ,,,,
