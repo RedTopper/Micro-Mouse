@@ -185,12 +185,14 @@
 <text x="-9.525" y="-1.27" size="2.54" layer="21" font="vector">GND</text>
 <text x="-9.525" y="-4.445" size="1.27" layer="21" font="vector">VIN</text>
 <text x="-9.525" y="3.175" size="1.27" layer="21">ENABLE</text>
-<pad name="GND_B2" x="14.732" y="-6.35" drill="1.016" diameter="1.778"/>
-<pad name="GND_B1" x="14.732" y="-3.81" drill="1.016" diameter="1.778"/>
+<pad name="GND_B2" x="14.732" y="3.81" drill="1.016" diameter="1.778"/>
+<pad name="GND_B1" x="14.732" y="6.35" drill="1.016" diameter="1.778"/>
 <pad name="VOUT" x="14.732" y="1.27" drill="1.016" diameter="1.778"/>
-<text x="12.954" y="-6.35" size="2.54" layer="21" font="vector" align="bottom-right">GND</text>
+<text x="12.954" y="3.81" size="2.54" layer="21" font="vector" align="bottom-right">GND</text>
 <text x="12.954" y="0.762" size="1.27" layer="21" font="vector" align="bottom-right">VOUT</text>
-<text x="-11.049" y="-10.922" size="2.54" layer="25" font="vector" align="bottom-center">&gt;NAME</text>
+<text x="23.241" y="-0.762" size="2.54" layer="25" font="vector" rot="R90" align="bottom-center">&gt;NAME</text>
+<pad name="P$1" x="14.732" y="-1.27" drill="1.016" diameter="1.778"/>
+<pad name="P$2" x="-11.43" y="-6.35" drill="1.016" diameter="1.778"/>
 </package>
 <package name="VL6180-X">
 <pad name="VIN" x="1.27" y="1.27" drill="1.016" diameter="1.778"/>
@@ -199,15 +201,13 @@
 <pad name="SCL" x="1.27" y="8.89" drill="1.016" diameter="1.778"/>
 <pad name="GPIO0" x="1.27" y="11.43" drill="1.016" diameter="1.778"/>
 <pad name="GPIO1" x="1.27" y="13.97" drill="1.016" diameter="1.778"/>
-<wire x1="2.54" y1="-6.35" x2="2.54" y2="-2.54" width="0.127" layer="21"/>
 <wire x1="2.54" y1="-2.54" x2="2.54" y2="15.24" width="0.127" layer="21"/>
 <wire x1="2.54" y1="15.24" x2="0" y2="15.24" width="0.127" layer="21"/>
 <wire x1="0" y1="15.24" x2="0" y2="-2.54" width="0.127" layer="21"/>
-<wire x1="2.54" y1="-6.35" x2="5.08" y2="-6.35" width="0.127" layer="21"/>
-<wire x1="5.08" y1="-6.35" x2="5.08" y2="5.08" width="0.127" layer="21"/>
+<wire x1="2.54" y1="-2.54" x2="5.08" y2="-2.54" width="0.127" layer="21"/>
+<wire x1="5.08" y1="-2.54" x2="5.08" y2="5.08" width="0.127" layer="21"/>
 <wire x1="5.08" y1="5.08" x2="5.08" y2="7.62" width="0.127" layer="21"/>
-<wire x1="5.08" y1="7.62" x2="5.08" y2="19.05" width="0.127" layer="21"/>
-<wire x1="2.54" y1="19.05" x2="2.54" y2="15.24" width="0.127" layer="21"/>
+<wire x1="5.08" y1="7.62" x2="5.08" y2="15.24" width="0.127" layer="21"/>
 <wire x1="5.08" y1="7.62" x2="6.35" y2="7.62" width="0.127" layer="21"/>
 <wire x1="6.35" y1="7.62" x2="6.35" y2="5.08" width="0.127" layer="21"/>
 <wire x1="6.35" y1="5.08" x2="5.08" y2="5.08" width="0.127" layer="21"/>
@@ -216,7 +216,7 @@
 <text x="-1.27" y="7.62" size="2.54" layer="25" font="vector" rot="R90" align="bottom-center">&gt;NAME</text>
 <pad name="VDD" x="1.27" y="-1.27" drill="1" diameter="1.778"/>
 <wire x1="0" y1="-2.54" x2="2.54" y2="-2.54" width="0.127" layer="21"/>
-<wire x1="2.54" y1="19.05" x2="5.08" y2="19.05" width="0.127" layer="21"/>
+<wire x1="2.54" y1="15.24" x2="5.08" y2="15.24" width="0.127" layer="21"/>
 </package>
 </packages>
 <symbols>
@@ -926,6 +926,17 @@
 <segment>
 <pinref part="MOTOR1" gate="G$1" pin="BIN2"/>
 <wire x1="73.66" y1="5.08" x2="68.58" y2="5.08" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="ESP1" gate="G$1" pin="12/A11"/>
+<wire x1="63.5" y1="50.8" x2="86.36" y2="50.8" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="50.8" x2="86.36" y2="-15.24" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="-15.24" x2="-50.8" y2="-15.24" width="0.1524" layer="91"/>
+<pinref part="12V_BOOST" gate="G$1" pin="ENABLE"/>
+<wire x1="-50.8" y1="-15.24" x2="-50.8" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="-50.8" y1="73.66" x2="-58.42" y2="73.66" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
