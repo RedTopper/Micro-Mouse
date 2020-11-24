@@ -1,19 +1,17 @@
 # Micromouse (sddec20-28)
-
-## Team Members
-Joshua Wooi
-Austin Chesmore
-Aaron Walter
-Richard Anderson
-Tyler Fuchs
-Jorge Gomez
-
-## Website
-sddec20-28.sd.ece.iastate.edu
-
-## Preface
 This repository contains most of the work done by Senior Design group dec20-28
 during the Spring/Fall 2020. 
+
+## Team Members
+* Joshua Wooi
+* Austin Chesmore
+* Aaron Walter
+* Richard Anderson
+* Tyler Fuchs
+* Jorge Gomez
+
+## Website
+[sddec20-28.sd.ece.iastate.edu](Senior Design Website)
 
 ## Resources
 This repository contains additional resources generated during the project.
@@ -33,12 +31,12 @@ This folder contains general information about the project, such as a setup guid
 final report, poster, and anything else documentation wise.
 
 ### resource/gui
-Past User interface files
+Past User Interface Files
 
-This directory conains a prototype GUI written in Python. It is no longer used in
-favor of a web based UI, but it is kept here for archival purposes.
+This directory contains a prototype GUI written in Python. We no longer use it in
+favor of a web-based UI, but we will keep it here for archival purposes.
 
 ### resource/pcb
 Current, Past, and Future PCB Designs
 
-These are the Eagle files used to manufature the PCB of the robot.
+These are the Eagle files used to manufacture the PCB of the robot.
